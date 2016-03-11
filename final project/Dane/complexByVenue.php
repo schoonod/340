@@ -35,72 +35,58 @@ if($mysqli->connect_errno){
     </div>
 </div>
 
-<h3>This is the Venues table query</h3>
+<h3>This is the Complex query results</h3>
 
 <table border="1" style="width:100%" >
-			<th colspan="8">All product entities in the database:</th>
+			<th colspan="6">All product entities in the database:</th>
 		<tr>
-			<td>VenueID</td>
+			<td>ProductID</td>
+			<td>Price</td>
 			<td>Name</td>
-			<td>Date</td>
-			<td>Address</td>
-			<td>StreetName</td>
-			<td>City</td>
-			<td>Zip</td>
+			<td>Description</td>
+			<td>Ingredients</td>
 			<td>SellerID</td>
 		</tr>
 
 <?php
 if(!($stmt = $mysqli->prepare("
-SELECT * FROM venues v
+SELECT p.productID, p.price, p.name, p.description, p.ingredients, p.sellerID FROM products p
+INNER JOIN venues_products vp ON vp.pid = p.productID
+INNER JOIN venues v ON v.venueID = vp.vid
+WHERE v.name = ? AND p.productID NOT IN
+(
+SELECT p.productID FROM products p
+INNER JOIN products_orders po ON po.pid = p.productID
+INNER JOIN orders o ON o.orderID = po.oid
+)
+
 "))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
+if(!($stmt->bind_param("s",$_POST['complexByVenue']))){
+	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 }
 
 if(!$stmt->execute()){
 	echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 
-if(!$stmt->bind_result($venueID, $name, $dateTime, $address, $streetName, $city, $zip, $sellerID)){
+if(!$stmt->bind_result($productID,$price,$name,$description,$ingredients,$sellerID)){
 	echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 
 while($stmt->fetch()){
- echo "<tr>\n<td>\n" . $venueID . "\n</td>\n<td>\n" . $name . "\n</td>\n<td>\n" . $dateTime . "\n</td>\n<td>\n" . $address ."\n</td>\n<td>\n" . $streetName . "\n</td>\n<td>\n" . $city . "\n</td>\n<td>\n" . $zip . "\n</td>\n<td>\n" . $sellerID . "\n</td>\n</tr>";
+ echo "<tr>\n<td>\n" . $productID . "\n</td>\n<td>\n" . $price . 
+         "\n</td>\n<td>\n" . $name . "\n</td>\n<td>\n". $description .  
+		  "\n</td>\n<td>\n" . $ingredients . "\n</td>\n<td>\n". $sellerID.
+		  "\n</td>\n</tr>";
 }
-
 $stmt->close();
 ?>
-
 </table>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

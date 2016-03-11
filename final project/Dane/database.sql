@@ -45,7 +45,7 @@ CREATE TABLE `venues` (
 
 CREATE TABLE `orders` (
 	`orderID` INT AUTO_INCREMENT,
-	`timeStamp` dateTime NOT NULL,
+	`timeStamp` dateTime NOT NULL DEFAULT CURDATE(),
 	`totalPrice` DECIMAL(6,2) NOT NULL,
 	`sellerID` INT NOT NULL,
 	`venueID` INT NOT NULL,

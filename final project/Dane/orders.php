@@ -35,24 +35,21 @@ if($mysqli->connect_errno){
     </div>
 </div>
 
-<h3>This is the Venues table query</h3>
+<h3>This is the Orders table query</h3>
 
 <table border="1" style="width:100%" >
-			<th colspan="8">All product entities in the database:</th>
+			<th colspan="6">All product entities in the database:</th>
 		<tr>
-			<td>VenueID</td>
-			<td>Name</td>
-			<td>Date</td>
-			<td>Address</td>
-			<td>StreetName</td>
-			<td>City</td>
-			<td>Zip</td>
-			<td>SellerID</td>
+			<td>orderID</td>
+			<td>timeStamp</td>
+			<td>totalPrice</td>
+			<td>sellerID</td>
+			<td>venueID</td>
 		</tr>
 
 <?php
 if(!($stmt = $mysqli->prepare("
-SELECT * FROM venues v
+SELECT * FROM orders o
 "))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
@@ -61,12 +58,12 @@ if(!$stmt->execute()){
 	echo "Execute failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 
-if(!$stmt->bind_result($venueID, $name, $dateTime, $address, $streetName, $city, $zip, $sellerID)){
+if(!$stmt->bind_result($orderID, $timeStamp, $totalPrice, $sellerID, $venueID)){
 	echo "Bind failed: "  . $mysqli->connect_errno . " " . $mysqli->connect_error;
 }
 
 while($stmt->fetch()){
- echo "<tr>\n<td>\n" . $venueID . "\n</td>\n<td>\n" . $name . "\n</td>\n<td>\n" . $dateTime . "\n</td>\n<td>\n" . $address ."\n</td>\n<td>\n" . $streetName . "\n</td>\n<td>\n" . $city . "\n</td>\n<td>\n" . $zip . "\n</td>\n<td>\n" . $sellerID . "\n</td>\n</tr>";
+ echo "<tr>\n<td>\n" . $orderID . "\n</td>\n<td>\n" . $timeStamp . "\n</td>\n<td>\n" . $totalPrice . "\n</td>\n<td>\n" . $sellerID ."\n</td>\n<td>\n" . $venueID . "\n</td>\n</tr>";
 }
 
 $stmt->close();
@@ -75,6 +72,7 @@ $stmt->close();
 </table>
 </body>
 </html>
+
 
 
 
